@@ -7,6 +7,7 @@ import { AuthCard } from '@/components/auth/auth-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { getAuthErrorMessage } from '@/lib/auth-errors'
 import { isEmail } from '@/lib/utils'
 import { signInWithEmail, signInWithGoogle } from '@/services/auth-service'
 
@@ -38,8 +39,9 @@ export function SignInPage() {
       await signInWithEmail({ email, password })
       toast.success('Welcome back')
       navigate('/today', { replace: true })
-    } catch {
-      setError('That sign in attempt failed. Check your details and try again.')
+    } catch (error) {
+      console.error('Email sign in failed', error)
+      setError(getAuthErrorMessage(error))
     } finally {
       setLoading(false)
     }
@@ -53,8 +55,9 @@ export function SignInPage() {
       await signInWithGoogle()
       toast.success('Welcome in')
       navigate('/today', { replace: true })
-    } catch {
-      setError('Google sign in could not be completed. Check the provider setup and try again.')
+    } catch (error) {
+      console.error('Google sign in failed', error)
+      setError(getAuthErrorMessage(error))
     } finally {
       setGoogleLoading(false)
     }
