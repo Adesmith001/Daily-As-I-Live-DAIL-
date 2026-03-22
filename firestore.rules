@@ -1,0 +1,115 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function validTheme(theme) {
+      return theme in ['Mist', 'Sage', 'Sky', 'Peach', 'Lilac', 'Rose', 'Sand', 'Slate'];
+    }
+
+    function validDate(value) {
+      return value is string && value.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+
+    function validTracker(data, trackerId) {
+      return data.keys().hasOnly([
+          'id',
+          'userId',
+          'name',
+          'type',
+          'description',
+          'isActive',
+          'displayOrder',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.id == trackerId &&
+        data.userId == request.auth.uid &&
+        data.name is string &&
+        data.name.size() > 0 &&
+        data.name.size() <= 40 &&
+        data.type in ['checkbox', 'range'] &&
+        data.description is string &&
+        data.description.size() <= 140 &&
+        data.isActive is bool &&
+        data.displayOrder is int;
+    }
+
+    function validEntry(data, entryId) {
+      return data.keys().hasOnly([
+          'id',
+          'userId',
+          'trackerId',
+          'entryDate',
+          'checkboxValue',
+          'rangeValue',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.id == entryId &&
+        data.userId == request.auth.uid &&
+        data.trackerId is string &&
+        validDate(data.entryDate) &&
+        (
+          (data.checkboxValue is bool && data.rangeValue == null) ||
+          (data.rangeValue is int && data.rangeValue >= 0 && data.rangeValue <= 10 && data.checkboxValue == null)
+        );
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) &&
+        request.resource.data.keys().hasOnly([
+          'uid',
+          'displayName',
+          'email',
+          'theme',
+          'createdAt'
+        ]) &&
+        request.resource.data.uid == userId &&
+        request.resource.data.displayName is string &&
+        request.resource.data.email is string &&
+        validTheme(request.resource.data.theme);
+      allow update: if isOwner(userId) &&
+        request.resource.data.keys().hasOnly([
+          'uid',
+          'displayName',
+          'email',
+          'theme',
+          'createdAt'
+        ]) &&
+        request.resource.data.uid == userId &&
+        request.resource.data.email == resource.data.email &&
+        request.resource.data.displayName is string &&
+        validTheme(request.resource.data.theme);
+      allow delete: if false;
+    }
+
+    match /trackers/{trackerId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && validTracker(request.resource.data, trackerId);
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        validTracker(request.resource.data, trackerId) &&
+        request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /dailyEntries/{entryId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && validEntry(request.resource.data, entryId);
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        validEntry(request.resource.data, entryId) &&
+        request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

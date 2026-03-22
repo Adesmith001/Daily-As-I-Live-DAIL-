@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-ring: hsl(var(--ring));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px);
+}
+
+:root,
+[data-theme='Mist'] {
+  --background: 214 35% 97%;
+  --foreground: 220 20% 17%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 20% 17%;
+  --border: 215 23% 88%;
+  --input: 215 23% 88%;
+  --primary: 215 29% 44%;
+  --primary-foreground: 210 40% 98%;
+  --muted: 210 28% 94%;
+  --muted-foreground: 219 12% 42%;
+  --accent: 205 48% 92%;
+  --accent-foreground: 220 20% 17%;
+  --ring: 215 29% 44%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 210 40% 98%;
+  --shadow: 215 35% 30%;
+  --radius: 1.35rem;
+}
+
+[data-theme='Sage'] {
+  --background: 106 21% 96%;
+  --foreground: 140 16% 18%;
+  --card: 60 20% 99%;
+  --card-foreground: 140 16% 18%;
+  --border: 110 17% 85%;
+  --input: 110 17% 85%;
+  --primary: 135 18% 39%;
+  --primary-foreground: 60 20% 98%;
+  --muted: 100 18% 92%;
+  --muted-foreground: 135 10% 38%;
+  --accent: 104 28% 88%;
+  --accent-foreground: 140 16% 18%;
+  --ring: 135 18% 39%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 60 20% 98%;
+  --shadow: 138 18% 28%;
+}
+
+[data-theme='Sky'] {
+  --background: 207 46% 96%;
+  --foreground: 214 28% 18%;
+  --card: 0 0% 100%;
+  --card-foreground: 214 28% 18%;
+  --border: 205 28% 86%;
+  --input: 205 28% 86%;
+  --primary: 205 45% 47%;
+  --primary-foreground: 210 40% 98%;
+  --muted: 203 35% 92%;
+  --muted-foreground: 214 15% 42%;
+  --accent: 199 54% 88%;
+  --accent-foreground: 214 28% 18%;
+  --ring: 205 45% 47%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 210 40% 98%;
+  --shadow: 206 34% 31%;
+}
+
+[data-theme='Peach'] {
+  --background: 28 55% 96%;
+  --foreground: 20 24% 19%;
+  --card: 38 60% 99%;
+  --card-foreground: 20 24% 19%;
+  --border: 24 36% 86%;
+  --input: 24 36% 86%;
+  --primary: 18 48% 52%;
+  --primary-foreground: 40 60% 98%;
+  --muted: 30 42% 92%;
+  --muted-foreground: 21 16% 43%;
+  --accent: 20 62% 88%;
+  --accent-foreground: 20 24% 19%;
+  --ring: 18 48% 52%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 40 60% 98%;
+  --shadow: 21 32% 34%;
+}
+
+[data-theme='Lilac'] {
+  --background: 265 32% 96%;
+  --foreground: 270 16% 20%;
+  --card: 0 0% 100%;
+  --card-foreground: 270 16% 20%;
+  --border: 267 22% 87%;
+  --input: 267 22% 87%;
+  --primary: 267 28% 48%;
+  --primary-foreground: 260 40% 98%;
+  --muted: 266 24% 92%;
+  --muted-foreground: 268 10% 44%;
+  --accent: 276 38% 89%;
+  --accent-foreground: 270 16% 20%;
+  --ring: 267 28% 48%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 260 40% 98%;
+  --shadow: 270 22% 30%;
+}
+
+[data-theme='Rose'] {
+  --background: 342 38% 96%;
+  --foreground: 336 19% 19%;
+  --card: 0 0% 100%;
+  --card-foreground: 336 19% 19%;
+  --border: 340 27% 87%;
+  --input: 340 27% 87%;
+  --primary: 341 34% 48%;
+  --primary-foreground: 340 40% 98%;
+  --muted: 338 26% 92%;
+  --muted-foreground: 336 12% 42%;
+  --accent: 342 45% 89%;
+  --accent-foreground: 336 19% 19%;
+  --ring: 341 34% 48%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 340 40% 98%;
+  --shadow: 340 24% 32%;
+}
+
+[data-theme='Sand'] {
+  --background: 40 28% 95%;
+  --foreground: 33 18% 19%;
+  --card: 48 40% 98%;
+  --card-foreground: 33 18% 19%;
+  --border: 38 22% 84%;
+  --input: 38 22% 84%;
+  --primary: 34 28% 42%;
+  --primary-foreground: 45 45% 97%;
+  --muted: 42 22% 91%;
+  --muted-foreground: 34 12% 39%;
+  --accent: 40 32% 87%;
+  --accent-foreground: 33 18% 19%;
+  --ring: 34 28% 42%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 45 45% 97%;
+  --shadow: 34 18% 27%;
+}
+
+[data-theme='Slate'] {
+  --background: 220 20% 95%;
+  --foreground: 221 18% 18%;
+  --card: 0 0% 99%;
+  --card-foreground: 221 18% 18%;
+  --border: 220 14% 84%;
+  --input: 220 14% 84%;
+  --primary: 221 15% 38%;
+  --primary-foreground: 210 40% 98%;
+  --muted: 220 16% 90%;
+  --muted-foreground: 220 10% 40%;
+  --accent: 218 19% 86%;
+  --accent-foreground: 221 18% 18%;
+  --ring: 221 15% 38%;
+  --destructive: 4 70% 54%;
+  --destructive-foreground: 210 40% 98%;
+  --shadow: 221 17% 28%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-background font-sans text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top, hsl(var(--accent) / 0.65), transparent 38%),
+      linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted) / 0.85));
+  }
+
+  #root {
+    min-height: 100svh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif tracking-[-0.02em] text-foreground;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    @apply outline-none;
+  }
+}
+
+@layer utilities {
+  .app-frame {
+    @apply mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-28 pt-4 sm:px-6;
+  }
+
+  .surface-card {
+    @apply rounded-xl border border-border/70 bg-card/88 shadow-[0_24px_80px_-48px_hsl(var(--shadow)/0.7)] backdrop-blur-sm;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
