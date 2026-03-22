@@ -6,6 +6,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { DailyEntryDocument, TrackerDocument } from '@/types/models'
 
+const accentClasses = [
+  'tracker-rail-1',
+  'tracker-rail-2',
+  'tracker-rail-3',
+  'tracker-rail-4',
+  'tracker-rail-5',
+]
+
 export function DailyTrackerCard({
   tracker,
   entry,
@@ -22,18 +30,21 @@ export function DailyTrackerCard({
   onClear: () => Promise<void>
 }) {
   const hasValue = entry?.checkboxValue !== null || entry?.rangeValue !== null
+  const accentClass =
+    accentClasses[tracker.displayOrder % accentClasses.length] ?? accentClasses[0]
 
   return (
-    <Card>
-      <CardContent className="space-y-4 p-5">
+    <Card className="relative overflow-hidden">
+      <div className={cn('absolute bottom-6 left-0 top-6 w-1 rounded-full', accentClass)} />
+      <CardContent className="space-y-4 p-5 pl-6">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-xl">{tracker.name}</h3>
+              <h3 className="text-[1.4rem] tracking-[-0.05em]">{tracker.name}</h3>
               <Badge variant="secondary">{tracker.type}</Badge>
             </div>
             {tracker.description ? (
-              <p className="text-sm text-muted-foreground">{tracker.description}</p>
+              <p className="text-sm leading-6 text-muted-foreground">{tracker.description}</p>
             ) : null}
           </div>
 
@@ -54,10 +65,10 @@ export function DailyTrackerCard({
           <div className="grid grid-cols-2 gap-3">
             <button
               className={cn(
-                'flex min-h-14 items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-medium transition',
+                'flex min-h-14 items-center justify-center gap-2 rounded-[1.35rem] border px-4 py-3 text-sm font-semibold transition',
                 entry?.checkboxValue === true
-                  ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-background/70 text-foreground',
+                  ? 'tracker-action-active border-transparent'
+                  : 'tracker-action-idle text-foreground',
               )}
               disabled={isSaving}
               onClick={() => void onCheckboxSelect(true)}
@@ -67,10 +78,10 @@ export function DailyTrackerCard({
             </button>
             <button
               className={cn(
-                'flex min-h-14 items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-medium transition',
+                'flex min-h-14 items-center justify-center gap-2 rounded-[1.35rem] border px-4 py-3 text-sm font-semibold transition',
                 entry?.checkboxValue === false
-                  ? 'border-primary bg-accent text-accent-foreground'
-                  : 'border-border bg-background/70 text-foreground',
+                  ? 'tracker-action-dark border-transparent'
+                  : 'tracker-action-idle text-foreground',
               )}
               disabled={isSaving}
               onClick={() => void onCheckboxSelect(false)}
@@ -85,10 +96,10 @@ export function DailyTrackerCard({
               <button
                 key={index}
                 className={cn(
-                  'flex size-12 shrink-0 items-center justify-center rounded-2xl border text-sm font-semibold transition',
+                  'flex size-11 shrink-0 items-center justify-center rounded-[1.2rem] border text-sm font-semibold transition',
                   entry?.rangeValue === index
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-background/70 text-foreground',
+                    ? 'tracker-scale-active border-transparent'
+                    : 'tracker-scale-idle text-foreground',
                 )}
                 disabled={isSaving}
                 onClick={() => void onRangeSelect(index)}

@@ -45,10 +45,10 @@ export function LandingPage() {
 
       <FirebaseBanner />
 
-      <section className="surface-card overflow-hidden p-6 sm:p-8">
+      <section className="app-surface overflow-hidden p-6 sm:p-8">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-6">
-            <p className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-accent-foreground">
+            <p className="theme-chip inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
               <Sparkles className="size-4" />
               Daily As I Live
             </p>
@@ -79,7 +79,7 @@ export function LandingPage() {
           </div>
 
           <div className="grid gap-4">
-            <Card className="bg-card/92">
+            <Card>
               <CardContent className="space-y-4 p-5">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-foreground">Today score</p>
@@ -88,19 +88,19 @@ export function LandingPage() {
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-2xl bg-muted p-4">
+                  <div className="theme-card-muted rounded-2xl p-4">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
                       Streak
                     </p>
                     <p className="mt-2 text-2xl font-semibold">9</p>
                   </div>
-                  <div className="rounded-2xl bg-muted p-4">
+                  <div className="theme-card-muted rounded-2xl p-4">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
                       Week avg
                     </p>
                     <p className="mt-2 text-2xl font-semibold">7.8</p>
                   </div>
-                  <div className="rounded-2xl bg-muted p-4">
+                  <div className="theme-card-muted rounded-2xl p-4">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
                       Active
                     </p>
@@ -110,7 +110,7 @@ export function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/92">
+            <Card>
               <CardContent className="space-y-4 p-5">
                 <p className="text-sm font-medium text-foreground">Theme moods</p>
                 <div className="grid grid-cols-4 gap-3">

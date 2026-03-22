@@ -61,3 +61,22 @@ export function daysBetween(start: string, end: string) {
 export function isDateWithinDays(value: string, days: number, now = getTodayKey()) {
   return daysBetween(value, now) >= 0 && daysBetween(value, now) < days
 }
+
+export function getCurrentWeekDays(reference = new Date()) {
+  const current = new Date(reference)
+  const day = current.getDay()
+  const mondayOffset = day === 0 ? -6 : 1 - day
+
+  current.setDate(current.getDate() + mondayOffset)
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(current)
+    date.setDate(current.getDate() + index)
+
+    return {
+      key: formatDateKey(date),
+      weekday: date.toLocaleDateString(undefined, { weekday: 'short' }),
+      dayNumber: date.getDate(),
+    }
+  })
+}

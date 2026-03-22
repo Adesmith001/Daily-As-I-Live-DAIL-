@@ -23,14 +23,14 @@ export function AuthCard({
     <div className="app-frame justify-center pb-10 pt-6">
       <div className="mx-auto flex w-full max-w-md flex-col gap-6">
         <LogoMark />
-        <Card>
+        <Card className="overflow-hidden">
           <CardContent className="space-y-6 p-6">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="space-y-3">
+              <p className="theme-chip inline-flex px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em]">
                 Welcome
               </p>
-              <h1 className="text-4xl">{title}</h1>
-              <p className="text-sm text-muted-foreground">{description}</p>
+              <h1 className="text-4xl tracking-[-0.06em]">{title}</h1>
+              <p className="max-w-sm text-sm leading-6 text-muted-foreground">{description}</p>
             </div>
 
             {children}

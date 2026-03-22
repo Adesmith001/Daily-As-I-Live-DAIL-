@@ -83,7 +83,19 @@ export function HistoryPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <Card className="overflow-hidden">
+        <CardContent className="space-y-3 p-5">
+          <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+            Reflection
+          </p>
+          <h2 className="text-3xl tracking-[-0.05em]">History and trends</h2>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Review your past days, see what is compounding, and notice your patterns.
+          </p>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-3 sm:grid-cols-3">
         <MetricCard
           helper="Days in a row with at least one logged entry."
@@ -124,7 +136,7 @@ export function HistoryPage() {
             <div className="space-y-4">
               {deferredSummaries.map((summary) => (
                 <Link key={summary.date} to={`/history/${summary.date}`}>
-                  <Card className="transition hover:bg-card/95">
+                  <Card className="overflow-hidden transition hover:bg-white">
                     <CardContent className="flex items-center justify-between gap-4 p-5">
                       <div className="space-y-2">
                         <h3 className="text-2xl">{formatDateLabel(summary.date)}</h3>

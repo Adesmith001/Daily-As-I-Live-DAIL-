@@ -100,23 +100,37 @@ export function TrackersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <Card className="overflow-hidden">
+        <CardContent className="flex items-center justify-between gap-3 p-5">
+          <div>
+            <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+              Habit studio
+            </p>
+            <h2 className="mt-1 text-3xl tracking-[-0.05em]">Your trackers</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Build the stack you want to see every day.
+            </p>
+          </div>
+          <Button
+            onClick={() => {
+              setEditingTracker(null)
+              setDialogOpen(true)
+            }}
+          >
+            <Plus className="size-4" />
+            New
+          </Button>
+        </CardContent>
+      </Card>
+
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl">Your trackers</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Build daily check-ins that stay private to your account.
+          <h3 className="text-2xl tracking-[-0.05em]">Arrange your daily flow</h3>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            Activate, reorder, and tune the trackers that shape your day.
           </p>
         </div>
-        <Button
-          onClick={() => {
-            setEditingTracker(null)
-            setDialogOpen(true)
-          }}
-        >
-          <Plus className="size-4" />
-          New
-        </Button>
       </div>
 
       {loading ? (
@@ -138,7 +152,7 @@ export function TrackersPage() {
       ) : (
         <div className="space-y-4">
           {trackers.map((tracker, index) => (
-            <Card key={tracker.id}>
+            <Card key={tracker.id} className="overflow-hidden">
               <CardContent className="space-y-4 p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-2">
