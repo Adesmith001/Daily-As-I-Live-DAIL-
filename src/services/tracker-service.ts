@@ -15,10 +15,23 @@ import {
 import { db } from '@/lib/firebase'
 import type { TrackerDocument, TrackerFormValues } from '@/types/models'
 
+function requireDb() {
+  if (!db) {
+    throw new Error('Cloud Firestore is not configured.')
+  }
+
+  return db
+}
+
 export function subscribeToTrackers(
   uid: string,
   onData: (trackers: TrackerDocument[]) => void,
 ) {
+  if (!db) {
+    onData([])
+    return () => {}
+  }
+
   const trackersQuery = query(
     collection(db, 'trackers'),
     where('userId', '==', uid),
@@ -35,7 +48,8 @@ export async function createTracker(
   values: TrackerFormValues,
   displayOrder: number,
 ) {
-  const trackerRef = doc(collection(db, 'trackers'))
+  const database = requireDb()
+  const trackerRef = doc(collection(database, 'trackers'))
 
   await setDoc(trackerRef, {
     id: trackerRef.id,
@@ -57,7 +71,7 @@ export async function updateTracker(
   trackerId: string,
   values: Partial<TrackerFormValues>,
 ) {
-  await updateDoc(doc(db, 'trackers', trackerId), {
+  await updateDoc(doc(requireDb(), 'trackers', trackerId), {
     ...(values.name !== undefined ? { name: values.name.trim() } : {}),
     ...(values.description !== undefined
       ? { description: values.description.trim() }
@@ -68,7 +82,7 @@ export async function updateTracker(
 }
 
 export async function deleteTracker(trackerId: string) {
-  await deleteDoc(doc(db, 'trackers', trackerId))
+  await deleteDoc(doc(requireDb(), 'trackers', trackerId))
 }
 
 export async function reorderTracker(
@@ -88,13 +102,14 @@ export async function reorderTracker(
 
   const current = trackers[index]
   const target = trackers[targetIndex]
-  const batch = writeBatch(db)
+  const database = requireDb()
+  const batch = writeBatch(database)
 
-  batch.update(doc(db, 'trackers', current.id), {
+  batch.update(doc(database, 'trackers', current.id), {
     displayOrder: target.displayOrder,
     updatedAt: serverTimestamp(),
   })
-  batch.update(doc(db, 'trackers', target.id), {
+  batch.update(doc(database, 'trackers', target.id), {
     displayOrder: current.displayOrder,
     updatedAt: serverTimestamp(),
   })

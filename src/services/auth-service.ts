@@ -16,13 +16,21 @@ googleProvider.setCustomParameters({
   prompt: 'select_account',
 })
 
+function requireAuth() {
+  if (!auth) {
+    throw new Error('Firebase Authentication is not configured.')
+  }
+
+  return auth
+}
+
 export async function signUpWithEmail(params: {
   displayName: string
   email: string
   password: string
 }) {
   const credentials = await createUserWithEmailAndPassword(
-    auth,
+    requireAuth(),
     params.email,
     params.password,
   )
@@ -40,7 +48,7 @@ export async function signInWithEmail(params: {
   password: string
 }) {
   const credentials = await signInWithEmailAndPassword(
-    auth,
+    requireAuth(),
     params.email,
     params.password,
   )
@@ -49,11 +57,11 @@ export async function signInWithEmail(params: {
 }
 
 export async function signInWithGoogle() {
-  const credentials = await signInWithPopup(auth, googleProvider)
+  const credentials = await signInWithPopup(requireAuth(), googleProvider)
   await ensureUserDocument(credentials.user)
   return credentials.user
 }
 
 export async function signOutUser() {
-  await signOut(auth)
+  await signOut(requireAuth())
 }

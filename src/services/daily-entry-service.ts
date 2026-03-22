@@ -14,6 +14,14 @@ import { clampRangeValue } from '@/lib/utils'
 import { db } from '@/lib/firebase'
 import type { DailyEntryDocument, TrackerDocument } from '@/types/models'
 
+function requireDb() {
+  if (!db) {
+    throw new Error('Cloud Firestore is not configured.')
+  }
+
+  return db
+}
+
 export function getDailyEntryId(userId: string, trackerId: string, entryDate: string) {
   return `${userId}_${trackerId}_${entryDate}`
 }
@@ -23,6 +31,11 @@ export function subscribeToEntriesByDate(
   entryDate: string,
   onData: (entries: DailyEntryDocument[]) => void,
 ) {
+  if (!db) {
+    onData([])
+    return () => {}
+  }
+
   const entriesQuery = query(
     collection(db, 'dailyEntries'),
     where('userId', '==', uid),
@@ -38,6 +51,11 @@ export function subscribeToHistoryEntries(
   uid: string,
   onData: (entries: DailyEntryDocument[]) => void,
 ) {
+  if (!db) {
+    onData([])
+    return () => {}
+  }
+
   const entriesQuery = query(
     collection(db, 'dailyEntries'),
     where('userId', '==', uid),
@@ -57,7 +75,7 @@ export async function upsertDailyEntry(params: {
   existingEntry?: DailyEntryDocument
 }) {
   const id = getDailyEntryId(params.userId, params.tracker.id, params.entryDate)
-  const entryRef = doc(db, 'dailyEntries', id)
+  const entryRef = doc(requireDb(), 'dailyEntries', id)
 
   await setDoc(entryRef, {
     id,
@@ -83,5 +101,7 @@ export async function clearDailyEntry(
   trackerId: string,
   entryDate: string,
 ) {
-  await deleteDoc(doc(db, 'dailyEntries', getDailyEntryId(userId, trackerId, entryDate)))
+  await deleteDoc(
+    doc(requireDb(), 'dailyEntries', getDailyEntryId(userId, trackerId, entryDate)),
+  )
 }

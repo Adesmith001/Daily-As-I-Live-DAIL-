@@ -12,8 +12,18 @@ import { db } from '@/lib/firebase'
 import { DEFAULT_THEME } from '@/lib/themes'
 import type { AppTheme, UserDocument } from '@/types/models'
 
+function requireDb() {
+  if (!db) {
+    throw new Error('Cloud Firestore is not configured.')
+  }
+
+  return db
+}
+
 export async function createUserDocument(user: User, displayName?: string) {
-  await setDoc(doc(db, 'users', user.uid), {
+  const database = requireDb()
+
+  await setDoc(doc(database, 'users', user.uid), {
     uid: user.uid,
     displayName: displayName?.trim() || user.displayName || 'DAIL member',
     email: user.email || '',
@@ -23,7 +33,8 @@ export async function createUserDocument(user: User, displayName?: string) {
 }
 
 export async function ensureUserDocument(user: User, displayName?: string) {
-  const userRef = doc(db, 'users', user.uid)
+  const database = requireDb()
+  const userRef = doc(database, 'users', user.uid)
   const existingUser = await getDoc(userRef)
 
   if (!existingUser.exists()) {
@@ -46,19 +57,24 @@ export function subscribeToUserProfile(
   uid: string,
   onData: (user: UserDocument | null) => void,
 ) {
+  if (!db) {
+    onData(null)
+    return () => {}
+  }
+
   return onSnapshot(doc(db, 'users', uid), (snapshot) => {
     onData(snapshot.exists() ? (snapshot.data() as UserDocument) : null)
   })
 }
 
 export async function updateUserTheme(uid: string, theme: AppTheme) {
-  await updateDoc(doc(db, 'users', uid), {
+  await updateDoc(doc(requireDb(), 'users', uid), {
     theme,
   })
 }
 
 export async function updateUserDisplayName(uid: string, displayName: string) {
-  await updateDoc(doc(db, 'users', uid), {
+  await updateDoc(doc(requireDb(), 'users', uid), {
     displayName: displayName.trim(),
   })
 }

@@ -13,9 +13,11 @@ const firebaseConfig = {
 
 export const isFirebaseConfigured = Object.values(firebaseConfig).every(Boolean)
 
-const app = initializeApp(firebaseConfig)
+const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null
 
-export const auth = getAuth(app)
-export const db = getFirestore(app)
+export const auth = app ? getAuth(app) : null
+export const db = app ? getFirestore(app) : null
 
-void setPersistence(auth, browserLocalPersistence)
+if (auth) {
+  void setPersistence(auth, browserLocalPersistence)
+}
