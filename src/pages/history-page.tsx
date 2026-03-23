@@ -133,9 +133,13 @@ export function HistoryPage() {
               title="No entries in this range"
             />
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {deferredSummaries.map((summary) => (
-                <Link key={summary.date} to={`/history/${summary.date}`}>
+                <Link
+                  key={summary.date}
+                  className="block"
+                  to={`/history/${summary.date}`}
+                >
                   <Card className="overflow-hidden transition hover:bg-white">
                     <CardContent className="flex items-center justify-between gap-4 p-5">
                       <div className="space-y-2">
