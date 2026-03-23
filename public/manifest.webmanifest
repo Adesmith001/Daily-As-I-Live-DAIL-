@@ -1,0 +1,28 @@
+{
+  "name": "DAIL",
+  "short_name": "DAIL",
+  "description": "Daily As I Live tracker for habits, scores, and streaks.",
+  "theme_color": "#6a92c0",
+  "background_color": "#ecf4fb",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ DAIL (Daily As I Live) is a production-ready mobile-first tracker built with Vit
 - History, weekly/monthly filters, daily detail views
 - Streaks, charts, and weekly summaries
 - Soft token-based theme system persisted per user
+- Installable PWA with offline app-shell caching and local Firestore persistence
 
 ## Tech Stack
 
