@@ -23,6 +23,7 @@ service cloud.firestore {
           'id',
           'userId',
           'name',
+          'sectionId',
           'type',
           'description',
           'isActive',
@@ -34,11 +35,33 @@ service cloud.firestore {
         data.userId == request.auth.uid &&
         data.name is string &&
         data.name.size() > 0 &&
-        data.name.size() <= 40 &&
+        data.name.size() <= 4096 &&
+        (
+          !data.keys().hasAny(['sectionId']) ||
+          data.sectionId == null ||
+          (data.sectionId is string && data.sectionId.size() > 0 && data.sectionId.size() <= 120)
+        ) &&
         data.type in ['checkbox', 'range'] &&
         data.description is string &&
         data.description.size() <= 140 &&
         data.isActive is bool &&
+        data.displayOrder is int;
+    }
+
+    function validTrackerSection(data, sectionId) {
+      return data.keys().hasOnly([
+          'id',
+          'userId',
+          'name',
+          'displayOrder',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.id == sectionId &&
+        data.userId == request.auth.uid &&
+        data.name is string &&
+        data.name.size() > 0 &&
+        data.name.size() <= 120 &&
         data.displayOrder is int;
     }
 
@@ -98,6 +121,16 @@ service cloud.firestore {
       allow update: if isSignedIn() &&
         resource.data.userId == request.auth.uid &&
         validTracker(request.resource.data, trackerId) &&
+        request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /trackerSections/{sectionId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && validTrackerSection(request.resource.data, sectionId);
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        validTrackerSection(request.resource.data, sectionId) &&
         request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }

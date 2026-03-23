@@ -24,9 +24,19 @@ export interface TrackerDocument {
   id: string
   userId: string
   name: string
+  sectionId?: string | null
   type: TrackerType
   description: string
   isActive: boolean
+  displayOrder: number
+  createdAt?: Timestamp | null
+  updatedAt?: Timestamp | null
+}
+
+export interface TrackerSectionDocument {
+  id: string
+  userId: string
+  name: string
   displayOrder: number
   createdAt?: Timestamp | null
   updatedAt?: Timestamp | null
@@ -45,6 +55,7 @@ export interface DailyEntryDocument {
 
 export interface TrackerFormValues {
   name: string
+  sectionId: string
   type: TrackerType
   description: string
   isActive: boolean

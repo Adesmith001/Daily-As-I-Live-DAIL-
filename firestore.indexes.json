@@ -15,6 +15,20 @@
       ]
     },
     {
+      "collectionGroup": "trackerSections",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "displayOrder",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "dailyEntries",
       "queryScope": "COLLECTION",
       "fields": [

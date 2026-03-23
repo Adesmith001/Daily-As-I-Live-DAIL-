@@ -39,12 +39,16 @@ export function DailyTrackerCard({
       <CardContent className="space-y-4 p-5 pl-6">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <h3 className="text-[1.4rem] tracking-[-0.05em]">{tracker.name}</h3>
+            <div className="flex items-start gap-2">
+              <h3 className="break-words text-[1.4rem] tracking-[-0.05em]">
+                {tracker.name}
+              </h3>
               <Badge variant="secondary">{tracker.type}</Badge>
             </div>
             {tracker.description ? (
-              <p className="text-sm leading-6 text-muted-foreground">{tracker.description}</p>
+              <p className="break-words text-sm leading-6 text-muted-foreground">
+                {tracker.description}
+              </p>
             ) : null}
           </div>
 

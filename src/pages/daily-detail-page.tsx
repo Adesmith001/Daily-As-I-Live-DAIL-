@@ -98,10 +98,10 @@ export function DailyDetailPage() {
             <Card key={entry.id}>
               <CardContent className="flex items-center justify-between gap-4 p-5">
                 <div>
-                  <h3 className="text-2xl">
+                  <h3 className="break-words text-2xl">
                     {tracker?.name ?? 'Deleted tracker'}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
+                  <p className="mt-1 break-words text-sm text-muted-foreground">
                     {tracker?.description || 'Past entry retained in history.'}
                   </p>
                 </div>

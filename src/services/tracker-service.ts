@@ -55,6 +55,7 @@ export async function createTracker(
     id: trackerRef.id,
     userId: uid,
     name: values.name.trim(),
+    sectionId: values.sectionId.trim() || null,
     type: values.type,
     description: values.description.trim(),
     isActive: values.isActive,
@@ -73,6 +74,9 @@ export async function updateTracker(
 ) {
   await updateDoc(doc(requireDb(), 'trackers', trackerId), {
     ...(values.name !== undefined ? { name: values.name.trim() } : {}),
+    ...(values.sectionId !== undefined
+      ? { sectionId: values.sectionId.trim() || null }
+      : {}),
     ...(values.description !== undefined
       ? { description: values.description.trim() }
       : {}),
