@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { toast } from 'sonner'
 
+import { InstallAppButton } from '@/components/common/install-app-button'
 import { ThemePicker } from '@/components/settings/theme-picker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -66,6 +67,18 @@ export function SettingsPage() {
       </Card>
 
       <ThemePicker saving={savingTheme} value={theme} onChange={handleThemeChange} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>App install</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm leading-6 text-muted-foreground">
+            Add DAIL to your device for quicker access and a more app-like experience.
+          </p>
+          <InstallAppButton />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

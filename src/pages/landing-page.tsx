@@ -2,6 +2,7 @@ import { ArrowRight, CheckSquare, Palette, Sparkles, TrendingUp } from 'lucide-r
 import { Link } from 'react-router-dom'
 
 import { FirebaseBanner } from '@/components/common/firebase-banner'
+import { InstallAppButton } from '@/components/common/install-app-button'
 import { LogoMark } from '@/components/common/logo-mark'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -33,7 +34,8 @@ export function LandingPage() {
     <div className="app-frame gap-6 pb-12">
       <header className="flex items-center justify-between py-2">
         <LogoMark />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
+          <InstallAppButton variant="outline" />
           <Button asChild variant="ghost">
             <Link to={user ? '/today' : '/signin'}>{user ? 'Open app' : 'Sign in'}</Link>
           </Button>
@@ -72,6 +74,7 @@ export function LandingPage() {
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
+              <InstallAppButton size="lg" variant="outline" />
               <Button asChild variant="outline" size="lg">
                 <Link to={user ? '/history' : '/signin'}>See the flow</Link>
               </Button>
