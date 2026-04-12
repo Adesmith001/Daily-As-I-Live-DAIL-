@@ -1,6 +1,18 @@
+import type { ExerciseWeekday } from '@/types/models'
+
 function pad(value: number) {
   return value.toString().padStart(2, '0')
 }
+
+const weekdayOrder: ExerciseWeekday[] = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+]
 
 export function formatDateKey(date: Date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
@@ -77,6 +89,28 @@ export function getCurrentWeekDays(reference = new Date()) {
       key: formatDateKey(date),
       weekday: date.toLocaleDateString(undefined, { weekday: 'short' }),
       dayNumber: date.getDate(),
+      weekdayKey: getExerciseWeekdayFromDateKey(formatDateKey(date)),
     }
   })
+}
+
+export function getExerciseWeekdayOrder(weekday: ExerciseWeekday) {
+  return weekdayOrder.indexOf(weekday)
+}
+
+export function getExerciseWeekdayFromDateKey(value: string): ExerciseWeekday {
+  const day = parseDateKey(value).getDay()
+  if (day === 0) {
+    return 'sunday'
+  }
+
+  return weekdayOrder[day - 1] ?? 'monday'
+}
+
+export function getExerciseWeekdayLabel(weekday: ExerciseWeekday) {
+  return weekday[0].toUpperCase() + weekday.slice(1)
+}
+
+export function getExerciseWeekdayKeys() {
+  return [...weekdayOrder]
 }

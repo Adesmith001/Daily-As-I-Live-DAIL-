@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   ChartNoAxesColumn,
+  Dumbbell,
   ListTodo,
   LogOut,
   Settings,
@@ -27,6 +28,7 @@ import { cn } from '@/lib/utils'
 
 const navigationItems = [
   { to: '/today', label: 'Today', icon: SunMedium },
+  { to: '/exercises', label: 'Exercises', icon: Dumbbell },
   { to: '/trackers', label: 'Trackers', icon: ListTodo },
   { to: '/history', label: 'History', icon: ChartNoAxesColumn },
   { to: '/settings', label: 'Settings', icon: Settings },
@@ -40,6 +42,10 @@ const pageTitles: Record<string, { title: string; description: string }> = {
   '/trackers': {
     title: 'Trackers',
     description: 'Shape the habits and signals you want DAIL to follow.',
+  },
+  '/exercises': {
+    title: 'Exercises',
+    description: 'Follow your day-by-day plan, lock in progress, and tune each movement.',
   },
   '/history': {
     title: 'History',
@@ -130,7 +136,7 @@ export function AppShell() {
         </main>
 
         <nav className="frosted-strip fixed inset-x-4 bottom-0 z-40 px-4 pb-[calc(0.85rem+env(safe-area-inset-bottom))] pt-3 md:left-1/2 md:max-w-120 md:-translate-x-1/2">
-          <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
+          <div className="mx-auto grid max-w-md grid-cols-5 gap-2">
             {navigationItems.map((item) => (
               <NavLink
                 key={item.to}

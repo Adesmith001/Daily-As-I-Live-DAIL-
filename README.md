@@ -6,12 +6,14 @@ DAIL (Daily As I Live) is a production-ready mobile-first tracker built with Vit
 
 - Email/password and Google sign in, sign out, and persisted auth sessions
 - Protected routes for Today, Trackers, History, Daily Detail, and Settings
+- Protected Exercises route with daily plan tracking and gamified progress
 - Private per-user Firestore data with security rules
 - Custom trackers with checkbox or 0-10 range scoring
 - Fast daily upsert logging with no duplicate daily entry documents
 - Daily score calculation out of 10
 - History, weekly/monthly filters, daily detail views
 - Streaks, charts, and weekly summaries
+- Exercise XP, streaks, badges, and weekly adherence summaries
 - Soft token-based theme system persisted per user
 - Installable PWA with offline app-shell caching and local Firestore persistence
 
@@ -109,6 +111,47 @@ Files:
 - `entryDate` (`YYYY-MM-DD`)
 - `checkboxValue`
 - `rangeValue`
+- `createdAt`
+- `updatedAt`
+
+### `exerciseWorkouts`
+
+- `id`
+- `userId`
+- `templateItemId`
+- `name`
+- `weekday`
+- `weekdayOrder`
+- `category`
+- `description`
+- `target`
+- `videoUrl`
+- `videoSearchQuery`
+- `isActive`
+- `displayOrder`
+- `createdAt`
+- `updatedAt`
+
+### `exerciseEntries`
+
+- `id`
+- `userId`
+- `workoutId`
+- `entryDate` (`YYYY-MM-DD`)
+- `isCompleted`
+- `createdAt`
+- `updatedAt`
+
+### `exerciseProfiles`
+
+- `id`
+- `userId`
+- `xpTotal`
+- `currentStreak`
+- `bestStreak`
+- `weeklyAdherence`
+- `badges`
+- `defaultTemplateVersionImported`
 - `createdAt`
 - `updatedAt`
 

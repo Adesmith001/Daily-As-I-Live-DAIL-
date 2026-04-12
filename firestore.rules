@@ -86,6 +86,126 @@ service cloud.firestore {
         );
     }
 
+    function validExerciseWeekday(weekday) {
+      return weekday in [
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday'
+      ];
+    }
+
+    function validExerciseCategory(category) {
+      return category in [
+        'warmup',
+        'workout',
+        'cardio',
+        'core',
+        'mobility',
+        'recovery',
+        'full-body'
+      ];
+    }
+
+    function validExerciseWorkout(data, workoutId) {
+      return data.keys().hasOnly([
+          'id',
+          'userId',
+          'templateItemId',
+          'name',
+          'weekday',
+          'weekdayOrder',
+          'category',
+          'description',
+          'target',
+          'videoUrl',
+          'videoSearchQuery',
+          'isActive',
+          'displayOrder',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.id == workoutId &&
+        data.userId == request.auth.uid &&
+        (
+          !data.keys().hasAny(['templateItemId']) ||
+          data.templateItemId == null ||
+          (data.templateItemId is string && data.templateItemId.size() > 0 && data.templateItemId.size() <= 120)
+        ) &&
+        data.name is string &&
+        data.name.size() > 0 &&
+        data.name.size() <= 240 &&
+        validExerciseWeekday(data.weekday) &&
+        data.weekdayOrder is int &&
+        data.weekdayOrder >= 0 &&
+        data.weekdayOrder <= 6 &&
+        validExerciseCategory(data.category) &&
+        data.description is string &&
+        data.description.size() <= 240 &&
+        data.target is string &&
+        data.target.size() > 0 &&
+        data.target.size() <= 140 &&
+        data.videoUrl is string &&
+        data.videoUrl.size() <= 2048 &&
+        data.videoSearchQuery is string &&
+        data.videoSearchQuery.size() <= 200 &&
+        data.isActive is bool &&
+        data.displayOrder is int;
+    }
+
+    function validExerciseEntry(data, entryId) {
+      return data.keys().hasOnly([
+          'id',
+          'userId',
+          'workoutId',
+          'entryDate',
+          'isCompleted',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.id == entryId &&
+        data.userId == request.auth.uid &&
+        data.workoutId is string &&
+        validDate(data.entryDate) &&
+        data.isCompleted is bool;
+    }
+
+    function validExerciseProfile(data, profileId) {
+      return data.keys().hasOnly([
+          'id',
+          'userId',
+          'xpTotal',
+          'currentStreak',
+          'bestStreak',
+          'weeklyAdherence',
+          'badges',
+          'defaultTemplateVersionImported',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.id == profileId &&
+        data.userId == request.auth.uid &&
+        data.xpTotal is int &&
+        data.xpTotal >= 0 &&
+        data.currentStreak is int &&
+        data.currentStreak >= 0 &&
+        data.bestStreak is int &&
+        data.bestStreak >= 0 &&
+        data.weeklyAdherence is number &&
+        data.weeklyAdherence >= 0 &&
+        data.weeklyAdherence <= 100 &&
+        data.badges is list &&
+        data.badges.size() <= 20 &&
+        (
+          data.defaultTemplateVersionImported == null ||
+          (data.defaultTemplateVersionImported is string &&
+            data.defaultTemplateVersionImported.size() <= 120)
+        );
+    }
+
     match /users/{userId} {
       allow read: if isOwner(userId);
       allow create: if isOwner(userId) &&
@@ -141,6 +261,36 @@ service cloud.firestore {
       allow update: if isSignedIn() &&
         resource.data.userId == request.auth.uid &&
         validEntry(request.resource.data, entryId) &&
+        request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /exerciseWorkouts/{workoutId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && validExerciseWorkout(request.resource.data, workoutId);
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        validExerciseWorkout(request.resource.data, workoutId) &&
+        request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /exerciseEntries/{entryId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && validExerciseEntry(request.resource.data, entryId);
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        validExerciseEntry(request.resource.data, entryId) &&
+        request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /exerciseProfiles/{profileId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && validExerciseProfile(request.resource.data, profileId);
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        validExerciseProfile(request.resource.data, profileId) &&
         request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
