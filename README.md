@@ -76,7 +76,7 @@ firebase deploy --only firestore:rules
 firebase deploy --only firestore:indexes
 ```
 
-Files:
+Files:fir
 
 - `firestore.rules`
 - `firestore.indexes.json`
