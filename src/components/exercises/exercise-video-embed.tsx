@@ -16,6 +16,22 @@ function toSearchUrl(query: string) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query.trim())}`
 }
 
+function toSearchEmbedUrl(query: string) {
+  if (!query.trim()) {
+    return ''
+  }
+
+  return `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(query.trim())}`
+}
+
+function toVideoEmbedUrl(videoId: string) {
+  if (!videoId) {
+    return ''
+  }
+
+  return `https://www.youtube.com/embed/${videoId}`
+}
+
 function getYouTubeEmbedUrl(url: string) {
   const trimmed = url.trim()
   if (!trimmed) {
@@ -24,18 +40,40 @@ function getYouTubeEmbedUrl(url: string) {
 
   try {
     const parsed = new URL(trimmed)
+    const hostname = parsed.hostname.replace('www.', '').replace('m.', '')
+    const pathSegments = parsed.pathname.split('/').filter(Boolean)
 
-    if (parsed.hostname.includes('youtube.com')) {
-      const videoId = parsed.searchParams.get('v')
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`
-      }
+    if (hostname === 'youtu.be') {
+      const videoId = pathSegments[0] ?? ''
+      return toVideoEmbedUrl(videoId)
     }
 
-    if (parsed.hostname.includes('youtu.be')) {
-      const videoId = parsed.pathname.replace('/', '')
+    if (hostname === 'youtube.com' || hostname === 'youtube-nocookie.com') {
+      const videoId = parsed.searchParams.get('v')
       if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`
+        return toVideoEmbedUrl(videoId)
+      }
+
+      if (pathSegments[0] === 'embed' && pathSegments[1]) {
+        return toVideoEmbedUrl(pathSegments[1])
+      }
+
+      if (pathSegments[0] === 'shorts' && pathSegments[1]) {
+        return toVideoEmbedUrl(pathSegments[1])
+      }
+
+      if (pathSegments[0] === 'live' && pathSegments[1]) {
+        return toVideoEmbedUrl(pathSegments[1])
+      }
+
+      const playlistId = parsed.searchParams.get('list')
+      if (playlistId) {
+        return `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(playlistId)}`
+      }
+
+      const searchQuery = parsed.searchParams.get('search_query')
+      if (searchQuery) {
+        return toSearchEmbedUrl(searchQuery)
       }
     }
   } catch {
@@ -50,7 +88,7 @@ export function ExerciseVideoEmbed({
   videoUrl,
   videoSearchQuery,
 }: ExerciseVideoEmbedProps) {
-  const embedUrl = getYouTubeEmbedUrl(videoUrl)
+  const embedUrl = getYouTubeEmbedUrl(videoUrl) || toSearchEmbedUrl(videoSearchQuery)
   const searchUrl = toSearchUrl(videoSearchQuery)
   const fallbackUrl = videoUrl.trim() || searchUrl
 

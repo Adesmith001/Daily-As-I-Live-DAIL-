@@ -56,15 +56,23 @@ export async function ensureUserDocument(user: User, displayName?: string) {
 export function subscribeToUserProfile(
   uid: string,
   onData: (user: UserDocument | null) => void,
+  onError?: (error: unknown) => void,
 ) {
   if (!db) {
     onData(null)
     return () => {}
   }
 
-  return onSnapshot(doc(db, 'users', uid), (snapshot) => {
-    onData(snapshot.exists() ? (snapshot.data() as UserDocument) : null)
-  })
+  return onSnapshot(
+    doc(db, 'users', uid),
+    (snapshot) => {
+      onData(snapshot.exists() ? (snapshot.data() as UserDocument) : null)
+    },
+    (error) => {
+      onData(null)
+      onError?.(error)
+    },
+  )
 }
 
 export async function updateUserTheme(uid: string, theme: AppTheme) {

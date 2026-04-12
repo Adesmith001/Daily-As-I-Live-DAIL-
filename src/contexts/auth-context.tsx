@@ -48,10 +48,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(nextUser)
       setLoading(true)
 
-      unsubscribeProfile = subscribeToUserProfile(nextUser.uid, (nextProfile) => {
-        setProfile(nextProfile)
-        setLoading(false)
-      })
+      unsubscribeProfile = subscribeToUserProfile(
+        nextUser.uid,
+        (nextProfile) => {
+          setProfile(nextProfile)
+          setLoading(false)
+        },
+        (error) => {
+          console.error('Could not subscribe to user profile', error)
+          setProfile(null)
+          setLoading(false)
+        },
+      )
     })
 
     return () => {

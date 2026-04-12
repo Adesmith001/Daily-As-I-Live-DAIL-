@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Plus, RefreshCw, Settings2 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -41,6 +41,18 @@ import type {
   ExerciseWorkoutDocument,
   ExerciseWorkoutFormValues,
 } from '@/types/models'
+
+function isPermissionDeniedError(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return false
+  }
+
+  if (!('code' in error)) {
+    return false
+  }
+
+  return (error as { code?: string }).code === 'permission-denied'
+}
 
 function getNextDisplayOrder(
   workouts: ExerciseWorkoutDocument[],
@@ -128,6 +140,7 @@ export function ExercisesPage() {
   const [importingDefaults, setImportingDefaults] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [pulseProgress, setPulseProgress] = useState(false)
+  const [profileSyncBlocked, setProfileSyncBlocked] = useState(false)
 
   const weekDays = useMemo(() => getCurrentWeekDays(), [])
   const selectedDay =
@@ -207,7 +220,16 @@ export function ExercisesPage() {
       return
     }
 
-    const unsubscribe = subscribeToExerciseProfile(user.uid, setProfile)
+    const unsubscribe = subscribeToExerciseProfile(
+      user.uid,
+      setProfile,
+      (error) => {
+        console.error('Could not subscribe to exercise profile', error)
+        if (isPermissionDeniedError(error)) {
+          setProfileSyncBlocked(true)
+        }
+      },
+    )
 
     return () => {
       unsubscribe()
@@ -253,8 +275,43 @@ export function ExercisesPage() {
 
   const loading = !workoutsLoaded || !selectedEntriesLoaded || !historyLoaded
 
+  const syncProfileSafely = useCallback(async (
+    nextSummary: ReturnType<typeof buildExerciseProgressSummary>,
+    defaultTemplateVersionImported?: string | null,
+  ) => {
+    if (!user || profileSyncBlocked) {
+      return
+    }
+
+    try {
+      await upsertExerciseProfile(user.uid, {
+        xpTotal: nextSummary.xpTotal,
+        currentStreak: nextSummary.currentStreak,
+        bestStreak: nextSummary.bestStreak,
+        weeklyAdherence: nextSummary.weeklyAdherence,
+        badges: nextSummary.badges,
+        defaultTemplateVersionImported:
+          defaultTemplateVersionImported ??
+          profile?.defaultTemplateVersionImported ??
+          null,
+      })
+    } catch (error) {
+      console.error('Could not sync exercise profile', error)
+      if (isPermissionDeniedError(error)) {
+        setProfileSyncBlocked(true)
+        toast.message(
+          'Progress will still save. XP and badges sync is blocked by Firestore permissions.',
+        )
+      }
+    }
+  }, [profile?.defaultTemplateVersionImported, profileSyncBlocked, user])
+
   useEffect(() => {
     if (!user || !historyLoaded || !workoutsLoaded) {
+      return
+    }
+
+    if (profileSyncBlocked) {
       return
     }
 
@@ -262,15 +319,8 @@ export function ExercisesPage() {
       return
     }
 
-    void upsertExerciseProfile(user.uid, {
-      xpTotal: summary.xpTotal,
-      currentStreak: summary.currentStreak,
-      bestStreak: summary.bestStreak,
-      weeklyAdherence: summary.weeklyAdherence,
-      badges: summary.badges,
-      defaultTemplateVersionImported: profile?.defaultTemplateVersionImported ?? null,
-    })
-  }, [historyLoaded, profile, summary, user, workoutsLoaded])
+    void syncProfileSafely(summary)
+  }, [historyLoaded, profile, profileSyncBlocked, summary, syncProfileSafely, user, workoutsLoaded])
 
   async function handleImportDefaults() {
     if (!user) {
@@ -290,14 +340,7 @@ export function ExercisesPage() {
         toast.success(`Imported ${result.importedCount} default exercise items.`)
       }
 
-      await upsertExerciseProfile(user.uid, {
-        xpTotal: summary.xpTotal,
-        currentStreak: summary.currentStreak,
-        bestStreak: summary.bestStreak,
-        weeklyAdherence: summary.weeklyAdherence,
-        badges: summary.badges,
-        defaultTemplateVersionImported: result.templateVersion,
-      })
+      await syncProfileSafely(summary, result.templateVersion)
     } catch (error) {
       console.error('Could not import default exercise template', error)
       toast.error('Could not import the default plan right now.')
@@ -428,14 +471,7 @@ export function ExercisesPage() {
         window.setTimeout(() => setPulseProgress(false), 650)
       }
 
-      await upsertExerciseProfile(user.uid, {
-        xpTotal: nextSummary.xpTotal,
-        currentStreak: nextSummary.currentStreak,
-        bestStreak: nextSummary.bestStreak,
-        weeklyAdherence: nextSummary.weeklyAdherence,
-        badges: nextSummary.badges,
-        defaultTemplateVersionImported: profile?.defaultTemplateVersionImported ?? null,
-      })
+      await syncProfileSafely(nextSummary)
     } catch (error) {
       console.error('Could not save exercise completion', error)
       setEntriesForSelectedDate(previousSelectedEntries)

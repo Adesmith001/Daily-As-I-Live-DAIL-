@@ -286,7 +286,10 @@ service cloud.firestore {
     }
 
     match /exerciseProfiles/{profileId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow read: if isSignedIn() && (
+        profileId == request.auth.uid ||
+        resource.data.userId == request.auth.uid
+      );
       allow create: if isSignedIn() && validExerciseProfile(request.resource.data, profileId);
       allow update: if isSignedIn() &&
         resource.data.userId == request.auth.uid &&

@@ -18,20 +18,28 @@ function getProfileRef(uid: string) {
 export function subscribeToExerciseProfile(
   uid: string,
   onData: (profile: ExerciseProfileDocument | null) => void,
+  onError?: (error: unknown) => void,
 ) {
   if (!db) {
     onData(null)
     return () => {}
   }
 
-  return onSnapshot(getProfileRef(uid), (snapshot) => {
-    if (!snapshot.exists()) {
-      onData(null)
-      return
-    }
+  return onSnapshot(
+    getProfileRef(uid),
+    (snapshot) => {
+      if (!snapshot.exists()) {
+        onData(null)
+        return
+      }
 
-    onData(snapshot.data() as ExerciseProfileDocument)
-  })
+      onData(snapshot.data() as ExerciseProfileDocument)
+    },
+    (error) => {
+      onData(null)
+      onError?.(error)
+    },
+  )
 }
 
 export async function getExerciseProfile(uid: string) {
@@ -49,7 +57,22 @@ export async function upsertExerciseProfile(
     defaultTemplateVersionImported?: string | null
   },
 ) {
-  const existing = await getExerciseProfile(uid)
+  let existing: ExerciseProfileDocument | null = null
+  try {
+    existing = await getExerciseProfile(uid)
+  } catch (error) {
+    const code =
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      typeof (error as { code?: unknown }).code === 'string'
+        ? (error as { code: string }).code
+        : ''
+
+    if (code !== 'permission-denied') {
+      throw error
+    }
+  }
 
   await setDoc(
     getProfileRef(uid),
