@@ -14,10 +14,47 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="DAIL" />
+    <style>
+      html, body, #root {
+        min-height: 100%;
+      }
+
+      .boot-splash {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f6fb;
+      }
+
+      .boot-splash__logo {
+        width: 5rem;
+        height: 5rem;
+        border-radius: 1.6rem;
+        object-fit: cover;
+        animation: dailBootPulse 1.15s ease-in-out infinite;
+      }
+
+      @keyframes dailBootPulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        50% {
+          opacity: 0.68;
+          transform: scale(0.88);
+        }
+      }
+    </style>
     <title>DAIL</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div aria-label="Loading DAIL" class="boot-splash" role="status">
+        <img alt="" class="boot-splash__logo" src="/dail-logo.jpg" />
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

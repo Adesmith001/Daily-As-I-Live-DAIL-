@@ -17,23 +17,23 @@ export function ThemePicker({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Soft theme</CardTitle>
+        <CardTitle>Theme</CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {THEME_OPTIONS.map((theme) => (
           <button
             key={theme.name}
             className={cn(
-              'rounded-[1.4rem] border p-3 text-left transition',
+              'rounded-xl border p-3 text-left transition',
               value === theme.name
-                ? 'border-primary bg-accent/70 shadow-sm'
-                : 'border-border bg-background/70',
+                ? 'border-foreground bg-muted'
+                : 'border-border bg-card hover:bg-muted',
             )}
             disabled={saving}
             onClick={() => void onChange(theme.name)}
           >
             <div
-              className="mb-3 flex h-14 items-end gap-1 rounded-[1rem] border p-2"
+              className="mb-3 flex h-14 items-end gap-1 rounded-lg border p-2"
               style={{
                 backgroundColor: `hsl(${theme.preview.background})`,
                 borderColor: `hsl(${theme.preview.border})`,

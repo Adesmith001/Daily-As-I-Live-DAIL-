@@ -8,22 +8,21 @@ import {
   YAxis,
 } from 'recharts'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
 export function HistoryChart({
   data,
 }: {
   data: Array<{ label: string; score: number | null }>
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Score trend</CardTitle>
-      </CardHeader>
-      <CardContent className="h-64">
+    <section className="section-block">
+      <div className="mb-4">
+        <p className="section-kicker">Trend</p>
+        <h3 className="mt-2 text-2xl">Score trend</h3>
+      </div>
+      <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="4 4" vertical={false} />
+            <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
             <XAxis
               dataKey="label"
               axisLine={false}
@@ -38,23 +37,23 @@ export function HistoryChart({
             />
             <Tooltip
               contentStyle={{
-                borderRadius: 18,
+                borderRadius: 14,
                 border: '1px solid hsl(var(--border))',
                 background: 'hsl(var(--card))',
-                boxShadow: '0 12px 40px -20px hsl(var(--shadow) / 0.8)',
+                boxShadow: '0 16px 24px -22px hsl(var(--shadow) / 0.26)',
               }}
             />
             <Line
               dataKey="score"
               stroke="hsl(var(--primary))"
-              strokeWidth={3}
-              dot={{ r: 4, fill: 'hsl(var(--primary))' }}
+              strokeWidth={2.5}
+              dot={{ r: 3.5, fill: 'hsl(var(--primary))' }}
               activeDot={{ r: 5 }}
               connectNulls={false}
             />
           </LineChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   )
 }

@@ -18,7 +18,7 @@ export function ExerciseDaySelector({
   onSelect: (weekday: ExerciseWeekday) => void
 }) {
   return (
-    <div className="theme-week-strip p-3">
+    <div className="theme-week-strip">
       <div className="grid grid-cols-7 gap-2">
         {days.map((day) => {
           const isActive = day.weekdayKey === selectedWeekday
@@ -27,7 +27,7 @@ export function ExerciseDaySelector({
             <button
               key={day.key}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-[1.2rem] px-1 py-2 text-center transition',
+                'flex flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-center transition',
                 isActive ? 'theme-week-active' : 'hover:bg-muted/70',
               )}
               onClick={() => onSelect(day.weekdayKey)}
@@ -35,7 +35,7 @@ export function ExerciseDaySelector({
               <span
                 className={cn(
                   'text-[0.62rem] font-medium uppercase tracking-[0.16em]',
-                  isActive ? 'text-white/70' : 'text-muted-foreground',
+                  isActive ? 'text-background/70' : 'text-muted-foreground',
                 )}
               >
                 {day.weekday.slice(0, 3)}

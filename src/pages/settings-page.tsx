@@ -54,17 +54,13 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-5">
-      <Card className="overflow-hidden">
-        <CardContent className="space-y-3 p-5">
-          <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-            Personalize
-          </p>
-          <h2 className="text-3xl tracking-[-0.05em]">Settings</h2>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Tune the atmosphere of your app and keep your profile details in sync.
-          </p>
-        </CardContent>
-      </Card>
+      <section className="page-header">
+        <p className="section-kicker">Personalize</p>
+        <h2 className="text-3xl tracking-[-0.05em]">Settings</h2>
+        <p className="text-sm leading-6 text-muted-foreground">
+          Tune the atmosphere of your app and keep your profile details in sync.
+        </p>
+      </section>
 
       <ThemePicker saving={savingTheme} value={theme} onChange={handleThemeChange} />
 

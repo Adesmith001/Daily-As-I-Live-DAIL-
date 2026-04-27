@@ -3,13 +3,13 @@ import { Plus, RefreshCw, Settings2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { EmptyState } from '@/components/common/empty-state'
+import { LoadingScreen } from '@/components/common/loading-screen'
 import { ExerciseCard } from '@/components/exercises/exercise-card'
 import { ExerciseDaySelector } from '@/components/exercises/exercise-day-selector'
 import { ExerciseEditorDialog } from '@/components/exercises/exercise-editor-dialog'
 import { ExerciseProgressHeader } from '@/components/exercises/exercise-progress-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -526,43 +526,33 @@ export function ExercisesPage() {
   }
 
   if (loading) {
-    return (
-      <Card>
-        <CardContent className="p-5 text-sm text-muted-foreground">
-          Loading exercises...
-        </CardContent>
-      </Card>
-    )
+    return <LoadingScreen fullscreen={false} label="Loading exercises..." />
   }
 
   if (workouts.length === 0) {
     return (
       <div className="space-y-5">
-        <Card>
-          <CardContent className="space-y-4 p-5">
-            <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-              Exercises
-            </p>
-            <h2 className="text-3xl tracking-[-0.05em]">Import a weekly plan</h2>
-            <div className="max-w-sm">
-              <Select value={selectedTemplate.templateId} onValueChange={setSelectedTemplateId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {templates.map((template) => (
-                    <SelectItem key={template.templateId} value={template.templateId}>
-                      {template.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <p className="text-sm leading-6 text-muted-foreground">
-              Start with {selectedTemplate.title}, then customize every item for any user.
-            </p>
-          </CardContent>
-        </Card>
+        <section className="page-header">
+          <p className="section-kicker">Exercises</p>
+          <h2 className="text-3xl tracking-[-0.05em]">Import a weekly plan</h2>
+          <div className="max-w-sm">
+            <Select value={selectedTemplate.templateId} onValueChange={setSelectedTemplateId}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {templates.map((template) => (
+                  <SelectItem key={template.templateId} value={template.templateId}>
+                    {template.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Start with {selectedTemplate.title}, then customize every item for any user.
+          </p>
+        </section>
 
         <EmptyState
           actionLabel={importingDefaults ? 'Importing...' : `Import ${selectedTemplate.title}`}
@@ -588,77 +578,73 @@ export function ExercisesPage() {
         xpTotal={summary.xpTotal}
       />
 
-      <Card>
-        <CardContent className="space-y-4 p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                Day-by-day flow
-              </p>
-              <h3 className="mt-1 text-2xl tracking-[-0.04em]">Exercises</h3>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <div className="min-w-52">
-                <Select value={selectedTemplate.templateId} onValueChange={setSelectedTemplateId}>
-                  <SelectTrigger className="h-9 rounded-xl">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {templates.map((template) => (
-                      <SelectItem key={template.templateId} value={template.templateId}>
-                        {template.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button
-                disabled={importingDefaults}
-                size="sm"
-                variant="outline"
-                onClick={() => void handleImportTemplate()}
-              >
-                <RefreshCw className="size-4" />
-                {importingDefaults ? 'Importing...' : 'Import template'}
-              </Button>
-              <Button
-                size="sm"
-                variant={editMode ? 'secondary' : 'outline'}
-                onClick={() => setEditMode((current) => !current)}
-              >
-                <Settings2 className="size-4" />
-                {editMode ? 'Editing on' : 'Edit mode'}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  setEditingWorkout(null)
-                  setEditorOpen(true)
-                }}
-              >
-                <Plus className="size-4" />
-                Add exercise
-              </Button>
-            </div>
+      <section className="space-y-4 border-b border-border pb-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="section-kicker">Day-by-day flow</p>
+            <h3 className="mt-1 text-2xl tracking-[-0.04em]">Exercises</h3>
           </div>
-
-          <ExerciseDaySelector
-            days={weekDays}
-            selectedWeekday={selectedWeekday}
-            onSelect={setSelectedWeekday}
-          />
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline">
-              {selectedWorkouts.length} planned
-            </Badge>
-            <Badge variant="secondary">{selectedCompletion}% complete</Badge>
-            <Badge variant="outline">
-              {summary.weeklyQualifiedDays}/{summary.weeklyScheduledDays} strong days this week
-            </Badge>
+          <div className="flex flex-wrap gap-2">
+            <div className="min-w-52">
+              <Select value={selectedTemplate.templateId} onValueChange={setSelectedTemplateId}>
+                <SelectTrigger className="h-9 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {templates.map((template) => (
+                    <SelectItem key={template.templateId} value={template.templateId}>
+                      {template.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button
+              disabled={importingDefaults}
+              size="sm"
+              variant="outline"
+              onClick={() => void handleImportTemplate()}
+            >
+              <RefreshCw className="size-4" />
+              {importingDefaults ? 'Importing...' : 'Activate plan'}
+            </Button>
+            <Button
+              size="sm"
+              variant={editMode ? 'secondary' : 'outline'}
+              onClick={() => setEditMode((current) => !current)}
+            >
+              <Settings2 className="size-4" />
+              {editMode ? 'Editing on' : 'Edit mode'}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                setEditingWorkout(null)
+                setEditorOpen(true)
+              }}
+            >
+              <Plus className="size-4" />
+              Add exercise
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <ExerciseDaySelector
+          days={weekDays}
+          selectedWeekday={selectedWeekday}
+          onSelect={setSelectedWeekday}
+        />
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="outline">
+            {selectedWorkouts.length} planned
+          </Badge>
+          <Badge variant="secondary">{selectedCompletion}% complete</Badge>
+          <Badge variant="outline">
+            {summary.weeklyQualifiedDays}/{summary.weeklyScheduledDays} strong days this week
+          </Badge>
+        </div>
+      </section>
 
       {selectedWorkouts.length === 0 ? (
         <EmptyState

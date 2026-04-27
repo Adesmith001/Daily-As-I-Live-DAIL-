@@ -21,17 +21,20 @@ export function AuthCard({
 }) {
   return (
     <div className="app-frame justify-center pb-10 pt-6">
-      <div className="mx-auto flex w-full max-w-md flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-md flex-col gap-8">
         <LogoMark />
+        <div className="page-header border-b-0 pb-0">
+          <div className="space-y-3">
+            <p className="theme-chip inline-flex px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em]">
+                Welcome
+            </p>
+            <h1 className="text-4xl tracking-[-0.06em]">{title}</h1>
+            <p className="max-w-sm text-sm leading-6 text-muted-foreground">{description}</p>
+          </div>
+        </div>
+
         <Card className="overflow-hidden">
           <CardContent className="space-y-6 p-6">
-            <div className="space-y-3">
-              <p className="theme-chip inline-flex px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em]">
-                Welcome
-              </p>
-              <h1 className="text-4xl tracking-[-0.06em]">{title}</h1>
-              <p className="max-w-sm text-sm leading-6 text-muted-foreground">{description}</p>
-            </div>
 
             {children}
 

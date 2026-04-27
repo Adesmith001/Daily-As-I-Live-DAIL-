@@ -34,13 +34,13 @@ export function DailyTrackerCard({
     accentClasses[tracker.displayOrder % accentClasses.length] ?? accentClasses[0]
 
   return (
-    <Card className="relative overflow-hidden">
-      <div className={cn('absolute bottom-6 left-0 top-6 w-1 rounded-full', accentClass)} />
-      <CardContent className="space-y-4 p-5 pl-6">
+    <Card className="relative overflow-hidden rounded-[1.6rem]">
+      <div className={cn('absolute bottom-5 left-0 top-5 w-1.5 rounded-full', accentClass)} />
+      <CardContent className="space-y-5 p-5 pl-7">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
             <div className="flex items-start gap-2">
-              <h3 className="break-words text-[1.4rem] tracking-[-0.05em]">
+              <h3 className="break-words text-[1.28rem] tracking-[-0.04em]">
                 {tracker.name}
               </h3>
               <Badge variant="secondary">{tracker.type}</Badge>
@@ -69,7 +69,7 @@ export function DailyTrackerCard({
           <div className="grid grid-cols-2 gap-3">
             <button
               className={cn(
-                'flex min-h-14 items-center justify-center gap-2 rounded-[1.35rem] border px-4 py-3 text-sm font-semibold transition',
+                'flex min-h-13 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition',
                 entry?.checkboxValue === true
                   ? 'tracker-action-active border-transparent'
                   : 'tracker-action-idle text-foreground',
@@ -82,7 +82,7 @@ export function DailyTrackerCard({
             </button>
             <button
               className={cn(
-                'flex min-h-14 items-center justify-center gap-2 rounded-[1.35rem] border px-4 py-3 text-sm font-semibold transition',
+                'flex min-h-13 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition',
                 entry?.checkboxValue === false
                   ? 'tracker-action-dark border-transparent'
                   : 'tracker-action-idle text-foreground',
@@ -100,7 +100,7 @@ export function DailyTrackerCard({
               <button
                 key={index}
                 className={cn(
-                  'flex size-11 shrink-0 items-center justify-center rounded-[1.2rem] border text-sm font-semibold transition',
+                  'flex size-10 shrink-0 items-center justify-center rounded-lg border text-sm font-semibold transition',
                   entry?.rangeValue === index
                     ? 'tracker-scale-active border-transparent'
                     : 'tracker-scale-idle text-foreground',

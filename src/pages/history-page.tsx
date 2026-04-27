@@ -2,10 +2,10 @@ import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { EmptyState } from '@/components/common/empty-state'
+import { LoadingScreen } from '@/components/common/loading-screen'
 import { MetricCard } from '@/components/common/metric-card'
 import { HistoryChart } from '@/components/history/history-chart'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth } from '@/contexts/auth-context'
 import { daysBetween, formatDateLabel, getTodayKey } from '@/lib/date'
@@ -64,13 +64,7 @@ export function HistoryPage() {
   const trendData = buildTrendData(deferredSummaries, filter === 'month' ? 30 : 14)
 
   if (loading) {
-    return (
-      <Card>
-        <CardContent className="p-5 text-sm text-muted-foreground">
-          Loading history...
-        </CardContent>
-      </Card>
-    )
+    return <LoadingScreen fullscreen={false} label="Loading history..." />
   }
 
   if (summaries.length === 0) {
@@ -84,17 +78,13 @@ export function HistoryPage() {
 
   return (
     <div className="space-y-5">
-      <Card className="overflow-hidden">
-        <CardContent className="space-y-3 p-5">
-          <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-            Reflection
-          </p>
-          <h2 className="text-3xl tracking-[-0.05em]">History and trends</h2>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Review your past days, see what is compounding, and notice your patterns.
-          </p>
-        </CardContent>
-      </Card>
+      <section className="page-header">
+        <p className="section-kicker">Reflection</p>
+        <h2 className="text-3xl tracking-[-0.05em]">History and trends</h2>
+        <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+          Review your past days, see what is compounding, and notice your patterns.
+        </p>
+      </section>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <MetricCard
@@ -133,16 +123,16 @@ export function HistoryPage() {
               title="No entries in this range"
             />
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-3">
               {deferredSummaries.map((summary) => (
                 <Link
                   key={summary.date}
                   className="block"
                   to={`/history/${summary.date}`}
                 >
-                  <Card className="overflow-hidden transition hover:bg-white">
-                    <CardContent className="flex items-center justify-between gap-4 p-5">
-                      <div className="space-y-2">
+                  <div className="section-block transition hover:bg-muted">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="space-y-1">
                         <h3 className="text-2xl">{formatDateLabel(summary.date)}</h3>
                         <p className="text-sm text-muted-foreground">
                           {summary.entryCount} entries logged
@@ -154,8 +144,8 @@ export function HistoryPage() {
                           newest first
                         </span>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </Link>
               ))}
             </div>

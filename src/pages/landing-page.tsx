@@ -5,7 +5,6 @@ import { FirebaseBanner } from '@/components/common/firebase-banner'
 import { InstallAppButton } from '@/components/common/install-app-button'
 import { LogoMark } from '@/components/common/logo-mark'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { useAuth } from '@/contexts/auth-context'
 import { THEME_OPTIONS } from '@/lib/themes'
 
@@ -32,7 +31,7 @@ export function LandingPage() {
 
   return (
     <div className="app-frame gap-6 pb-12">
-      <header className="flex items-center justify-between py-2">
+      <header className="flex flex-wrap items-center justify-between gap-4 py-2">
         <LogoMark />
         <div className="flex flex-wrap justify-end gap-2">
           <InstallAppButton variant="outline" />
@@ -47,8 +46,8 @@ export function LandingPage() {
 
       <FirebaseBanner />
 
-      <section className="app-surface overflow-hidden p-6 sm:p-8">
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <section className="page-header pb-8 pt-4">
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div className="space-y-6">
             <p className="theme-chip inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
               <Sparkles className="size-4" />
@@ -82,82 +81,73 @@ export function LandingPage() {
           </div>
 
           <div className="grid gap-4">
-            <Card>
-              <CardContent className="space-y-4 p-5">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-foreground">Today score</p>
-                  <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
-                    8.4/10
-                  </span>
+            <div className="section-block space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="section-kicker">Snapshot</p>
+                <span className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-foreground">
+                  8.4/10
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="theme-card-muted p-4">
+                  <p className="section-kicker">Streak</p>
+                  <p className="mt-2 text-2xl font-semibold">9</p>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="theme-card-muted rounded-2xl p-4">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                      Streak
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold">9</p>
-                  </div>
-                  <div className="theme-card-muted rounded-2xl p-4">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                      Week avg
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold">7.8</p>
-                  </div>
-                  <div className="theme-card-muted rounded-2xl p-4">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                      Active
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold">5</p>
-                  </div>
+                <div className="theme-card-muted p-4">
+                  <p className="section-kicker">Week avg</p>
+                  <p className="mt-2 text-2xl font-semibold">7.8</p>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="theme-card-muted p-4">
+                  <p className="section-kicker">Active</p>
+                  <p className="mt-2 text-2xl font-semibold">5</p>
+                </div>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="space-y-4 p-5">
-                <p className="text-sm font-medium text-foreground">Theme moods</p>
-                <div className="grid grid-cols-4 gap-3">
-                  {THEME_OPTIONS.map((theme) => (
+            <div className="section-block space-y-4">
+              <div>
+                <p className="section-kicker">Theme moods</p>
+                <h2 className="mt-2 text-2xl">Choose your tone</h2>
+              </div>
+              <div className="grid grid-cols-4 gap-3">
+                {THEME_OPTIONS.map((theme) => (
+                  <div
+                    key={theme.name}
+                    className="rounded-xl border p-2"
+                    style={{
+                      backgroundColor: `hsl(${theme.preview.background})`,
+                      borderColor: `hsl(${theme.preview.border})`,
+                    }}
+                  >
                     <div
-                      key={theme.name}
-                      className="rounded-[1.1rem] border p-2"
-                      style={{
-                        backgroundColor: `hsl(${theme.preview.background})`,
-                        borderColor: `hsl(${theme.preview.border})`,
-                      }}
-                    >
-                      <div
-                        className="mb-2 h-6 rounded-full"
-                        style={{ backgroundColor: `hsl(${theme.preview.primary})` }}
-                      />
-                      <div
-                        className="h-3 rounded-full"
-                        style={{ backgroundColor: `hsl(${theme.preview.accent})` }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                      className="mb-2 h-6 rounded-md"
+                      style={{ backgroundColor: `hsl(${theme.preview.primary})` }}
+                    />
+                    <div
+                      className="h-3 rounded-md"
+                      style={{ backgroundColor: `hsl(${theme.preview.accent})` }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">
         {featureCards.map((feature) => (
-          <Card key={feature.title}>
-            <CardContent className="space-y-4 p-5">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
-                <feature.icon className="size-5" />
-              </div>
-              <div>
-                <h2 className="text-2xl">{feature.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {feature.body}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <div key={feature.title} className="section-block space-y-4">
+            <div className="flex size-12 items-center justify-center rounded-xl border border-border bg-muted text-foreground">
+              <feature.icon className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-2xl">{feature.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                {feature.body}
+              </p>
+            </div>
+          </div>
         ))}
       </section>
     </div>

@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { EmptyState } from "@/components/common/empty-state";
+import { LoadingScreen } from "@/components/common/loading-screen";
 import { TrackerFormDialog } from "@/components/trackers/tracker-form-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -224,28 +225,24 @@ export function TrackersPage() {
 
   return (
     <div className="space-y-5">
-      <Card className="overflow-hidden">
-        <CardContent className="flex items-center justify-between gap-3 p-5">
-          <div>
-            <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-              Habit studio
-            </p>
-            <h2 className="mt-1 text-3xl tracking-[-0.05em]">Your trackers</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Build the stack you want to see every day.
-            </p>
-          </div>
-          <Button
-            onClick={() => {
-              setEditingTracker(null);
-              setDialogOpen(true);
-            }}
-          >
-            <Plus className="size-4" />
-            New
-          </Button>
-        </CardContent>
-      </Card>
+      <section className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
+        <div>
+          <p className="section-kicker">Habit studio</p>
+          <h2 className="mt-1 text-3xl tracking-[-0.05em]">Your trackers</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Build the stack you want to see every day.
+          </p>
+        </div>
+        <Button
+          onClick={() => {
+            setEditingTracker(null);
+            setDialogOpen(true);
+          }}
+        >
+          <Plus className="size-4" />
+          New
+        </Button>
+      </section>
 
       <div className="flex items-center justify-between gap-3">
         <div>
@@ -258,8 +255,7 @@ export function TrackersPage() {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="space-y-3 p-5">
+      <section className="section-block space-y-3">
           <div>
             <h3 className="text-lg font-medium">Sections</h3>
             <p className="text-sm text-muted-foreground">
@@ -287,15 +283,10 @@ export function TrackersPage() {
               {creatingSection ? "Adding..." : "Add section"}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+      </section>
 
       {loading ? (
-        <Card>
-          <CardContent className="p-5 text-sm text-muted-foreground">
-            Loading trackers...
-          </CardContent>
-        </Card>
+        <LoadingScreen fullscreen={false} label="Loading trackers..." />
       ) : trackers.length === 0 && sections.length === 0 ? (
         <EmptyState
           actionLabel="Create tracker"
@@ -335,7 +326,7 @@ export function TrackersPage() {
                   {sectionGroup.trackers.map((tracker) => {
                     const index = trackerIndexById.get(tracker.id) ?? -1;
                     return (
-                      <Card key={tracker.id} className="overflow-hidden">
+                      <Card key={tracker.id} className="overflow-hidden rounded-[1.6rem]">
                         <CardContent className="space-y-4 p-5">
                           <div className="space-y-3">
                             <h3 className="wrap-break-words whitespace-pre-wrap text-2xl leading-tight">

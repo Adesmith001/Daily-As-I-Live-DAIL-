@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 
+import { LoadingScreen } from '@/components/common/loading-screen'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -54,13 +55,7 @@ export function DailyDetailPage() {
   const score = calculateDailyScore(entries)
 
   if (loading) {
-    return (
-      <Card>
-        <CardContent className="p-5 text-sm text-muted-foreground">
-          Loading this day...
-        </CardContent>
-      </Card>
-    )
+    return <LoadingScreen fullscreen={false} label="Loading this day..." />
   }
 
   return (

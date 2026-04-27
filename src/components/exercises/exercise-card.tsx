@@ -54,13 +54,13 @@ export function ExerciseCard({
   const accentClass = accentByCategory[workout.category] ?? 'tracker-rail-1'
 
   return (
-    <Card className="relative overflow-hidden">
-      <div className={cn('absolute bottom-6 left-0 top-6 w-1 rounded-full', accentClass)} />
-      <CardContent className="space-y-4 p-5 pl-6">
-        <div className="flex items-start justify-between gap-3">
+    <Card className="relative overflow-hidden rounded-[1.6rem]">
+      <div className={cn('absolute bottom-5 left-0 top-5 w-1.5 rounded-full', accentClass)} />
+      <CardContent className="space-y-5 p-5 pl-7">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-[1.3rem] leading-tight tracking-[-0.04em]">{workout.name}</h3>
+              <h3 className="text-[1.28rem] leading-tight tracking-[-0.04em]">{workout.name}</h3>
               <Badge variant="secondary">{workout.category}</Badge>
               {!workout.isActive ? <Badge variant="outline">inactive</Badge> : null}
             </div>
@@ -72,7 +72,7 @@ export function ExerciseCard({
 
           <button
             className={cn(
-              'flex min-h-11 min-w-28 items-center justify-center gap-2 rounded-[1.2rem] border px-3 py-2 text-sm font-semibold transition',
+              'flex min-h-11 min-w-30 items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition md:self-start',
               isCompleted
                 ? 'tracker-action-active border-transparent'
                 : 'tracker-action-idle text-foreground',

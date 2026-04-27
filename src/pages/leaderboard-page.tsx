@@ -3,6 +3,7 @@ import { Trophy } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { EmptyState } from '@/components/common/empty-state'
+import { LoadingScreen } from '@/components/common/loading-screen'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -110,28 +111,18 @@ export function LeaderboardPage() {
   }
 
   if (loading) {
-    return (
-      <Card>
-        <CardContent className="p-5 text-sm text-muted-foreground">
-          Loading leaderboard...
-        </CardContent>
-      </Card>
-    )
+    return <LoadingScreen fullscreen={false} label="Loading leaderboard..." />
   }
 
   return (
     <div className="space-y-5">
-      <Card className="overflow-hidden">
-        <CardContent className="space-y-3 p-5">
-          <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-            Exercise leaderboard
-          </p>
-          <h2 className="text-3xl tracking-[-0.05em]">Compare weekly progress</h2>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Rankings use weekly XP, then weekly adherence and streak as tiebreakers.
-          </p>
-        </CardContent>
-      </Card>
+      <section className="page-header">
+        <p className="section-kicker">Exercise leaderboard</p>
+        <h2 className="text-3xl tracking-[-0.05em]">Compare weekly progress</h2>
+        <p className="text-sm leading-6 text-muted-foreground">
+          Rankings use weekly XP, then weekly adherence and streak as tiebreakers.
+        </p>
+      </section>
 
       <Tabs defaultValue="global">
         <TabsList className="grid-cols-2">
@@ -174,7 +165,7 @@ export function LeaderboardPage() {
         <TabsContent value="head-to-head" className="space-y-4">
           <Card>
             <CardContent className="space-y-3 p-4">
-              <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Choose rival</p>
+              <p className="section-kicker">Choose rival</p>
               <Select
                 disabled={savingRival}
                 value={exerciseProfile?.rivalUid ?? NO_RIVAL_VALUE}
