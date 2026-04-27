@@ -6,6 +6,7 @@ import {
   LogOut,
   Settings,
   SunMedium,
+  Trophy,
 } from 'lucide-react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -31,6 +32,7 @@ const navigationItems = [
   { to: '/exercises', label: 'Exercises', icon: Dumbbell },
   { to: '/trackers', label: 'Trackers', icon: ListTodo },
   { to: '/history', label: 'History', icon: ChartNoAxesColumn },
+  { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -50,6 +52,10 @@ const pageTitles: Record<string, { title: string; description: string }> = {
   '/history': {
     title: 'History',
     description: 'Review past days, scores, streaks, and trend lines.',
+  },
+  '/leaderboard': {
+    title: 'Leaderboard',
+    description: 'Track weekly XP rankings and rivalry progress.',
   },
   '/settings': {
     title: 'Settings',
@@ -136,7 +142,7 @@ export function AppShell() {
         </main>
 
         <nav className="frosted-strip fixed inset-x-4 bottom-0 z-40 px-4 pb-[calc(0.85rem+env(safe-area-inset-bottom))] pt-3 md:left-1/2 md:max-w-120 md:-translate-x-1/2">
-          <div className="mx-auto grid max-w-md grid-cols-5 gap-2">
+          <div className="mx-auto grid max-w-md grid-cols-6 gap-2">
             {navigationItems.map((item) => (
               <NavLink
                 key={item.to}

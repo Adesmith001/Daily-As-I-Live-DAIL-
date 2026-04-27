@@ -136,11 +136,13 @@ export interface ExerciseProfileDocument {
   id: string
   userId: string
   xpTotal: number
+  weeklyXp: number
   currentStreak: number
   bestStreak: number
   weeklyAdherence: number
   badges: string[]
   defaultTemplateVersionImported: string | null
+  rivalUid: string | null
   createdAt?: Timestamp | null
   updatedAt?: Timestamp | null
 }
@@ -158,8 +160,20 @@ export interface ExerciseTemplateItem {
 }
 
 export interface ExerciseTemplate {
+  templateId: string
   version: string
   title: string
   description: string
   items: ExerciseTemplateItem[]
+}
+
+export interface ExerciseLeaderboardPublicDocument {
+  id: string
+  userId: string
+  displayName: string
+  weeklyXp: number
+  xpTotal: number
+  weeklyAdherence: number
+  currentStreak: number
+  updatedAt?: Timestamp | null
 }

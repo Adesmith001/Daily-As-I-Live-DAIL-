@@ -7,6 +7,7 @@ import { DailyDetailPage } from '@/pages/daily-detail-page'
 import { ExercisesPage } from '@/pages/exercises-page'
 import { HistoryPage } from '@/pages/history-page'
 import { LandingPage } from '@/pages/landing-page'
+import { LeaderboardPage } from '@/pages/leaderboard-page'
 import { SettingsPage } from '@/pages/settings-page'
 import { SignInPage } from '@/pages/sign-in-page'
 import { SignUpPage } from '@/pages/sign-up-page'
@@ -57,6 +58,7 @@ export function AppRouter() {
           <Route path="/exercises" element={<ExercisesPage />} />
           <Route path="/trackers" element={<TrackersPage />} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/history/:date" element={<DailyDetailPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>

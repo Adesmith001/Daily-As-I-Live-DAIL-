@@ -23,6 +23,7 @@ export interface ExerciseDayStat {
 
 export interface ExerciseProgressSummary {
   xpTotal: number
+  weeklyXp: number
   currentStreak: number
   bestStreak: number
   weeklyAdherence: number
@@ -233,6 +234,7 @@ export function buildExerciseProgressSummary(
   const weeklyStats = allStats.filter(
     (day) => day.date >= weekStart && day.date <= referenceDate,
   )
+  const weeklyXp = weeklyStats.reduce((total, day) => total + day.xpEarned, 0)
   const weeklyAdherence = calculateWeeklyAdherence(weeklyStats)
 
   const today = allStats[allStats.length - 1]
@@ -242,6 +244,7 @@ export function buildExerciseProgressSummary(
 
   return {
     xpTotal,
+    weeklyXp,
     currentStreak,
     bestStreak,
     weeklyAdherence,
@@ -267,10 +270,12 @@ export function toExerciseProfileDocument(
     id: userId,
     userId,
     xpTotal: summary.xpTotal,
+    weeklyXp: summary.weeklyXp,
     currentStreak: summary.currentStreak,
     bestStreak: summary.bestStreak,
     weeklyAdherence: summary.weeklyAdherence,
     badges: summary.badges,
     defaultTemplateVersionImported: templateVersion,
+    rivalUid: null,
   }
 }

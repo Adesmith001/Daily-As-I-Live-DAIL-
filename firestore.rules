@@ -178,11 +178,13 @@ service cloud.firestore {
           'id',
           'userId',
           'xpTotal',
+          'weeklyXp',
           'currentStreak',
           'bestStreak',
           'weeklyAdherence',
           'badges',
           'defaultTemplateVersionImported',
+          'rivalUid',
           'createdAt',
           'updatedAt'
         ]) &&
@@ -190,6 +192,8 @@ service cloud.firestore {
         data.userId == request.auth.uid &&
         data.xpTotal is int &&
         data.xpTotal >= 0 &&
+        data.weeklyXp is int &&
+        data.weeklyXp >= 0 &&
         data.currentStreak is int &&
         data.currentStreak >= 0 &&
         data.bestStreak is int &&
@@ -203,7 +207,47 @@ service cloud.firestore {
           data.defaultTemplateVersionImported == null ||
           (data.defaultTemplateVersionImported is string &&
             data.defaultTemplateVersionImported.size() <= 120)
+        ) &&
+        (
+          data.rivalUid == null ||
+          (data.rivalUid is string && data.rivalUid.size() > 0 && data.rivalUid.size() <= 120)
         );
+    }
+
+    function validExerciseLeaderboardPublic(data, leaderboardId) {
+      return data.keys().hasOnly([
+          'id',
+          'userId',
+          'displayName',
+          'weeklyXp',
+          'xpTotal',
+          'weeklyAdherence',
+          'currentStreak',
+          'updatedAt'
+        ]) &&
+        data.id == leaderboardId &&
+        data.userId == request.auth.uid &&
+        data.displayName is string &&
+        data.displayName.size() > 0 &&
+        data.displayName.size() <= 120 &&
+        data.weeklyXp is int &&
+        data.weeklyXp >= 0 &&
+        data.xpTotal is int &&
+        data.xpTotal >= 0 &&
+        data.weeklyAdherence is number &&
+        data.weeklyAdherence >= 0 &&
+        data.weeklyAdherence <= 100 &&
+        data.currentStreak is int &&
+        data.currentStreak >= 0;
+    }
+    
+    match /exerciseLeaderboardPublic/{leaderboardId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && validExerciseLeaderboardPublic(request.resource.data, leaderboardId);
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        validExerciseLeaderboardPublic(request.resource.data, leaderboardId);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
     match /users/{userId} {

@@ -7,6 +7,7 @@ export interface ExerciseProgressHeaderProps {
   todayCompletion: number
   currentStreak: number
   xpTotal: number
+  weeklyXp: number
   weeklyAdherence: number
   badges: string[]
   pulse?: boolean
@@ -16,6 +17,7 @@ export function ExerciseProgressHeader({
   todayCompletion,
   currentStreak,
   xpTotal,
+  weeklyXp,
   weeklyAdherence,
   badges,
   pulse = false,
@@ -53,13 +55,17 @@ export function ExerciseProgressHeader({
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-4">
           <div className="theme-card-muted rounded-2xl p-4">
             <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Current streak</p>
             <p className="mt-2 flex items-center gap-2 text-2xl font-semibold">
               <Flame className="size-5" />
               {currentStreak}
             </p>
+          </div>
+          <div className="theme-card-muted rounded-2xl p-4">
+            <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Weekly XP</p>
+            <p className="mt-2 text-2xl font-semibold">{weeklyXp}</p>
           </div>
           <div className="theme-card-muted rounded-2xl p-4">
             <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">XP total</p>

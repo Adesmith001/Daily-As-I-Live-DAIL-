@@ -71,6 +71,7 @@ describe('exercise score helpers', () => {
     expect(summary.currentStreak).toBe(3)
     expect(summary.bestStreak).toBe(3)
     expect(summary.weeklyAdherence).toBe(100)
+    expect(summary.weeklyXp).toBe(90)
     expect(summary.xpTotal).toBe(90)
     expect(summary.badges).toContain('3-Day Streak')
     expect(summary.badges).toContain('Weekly 80%')

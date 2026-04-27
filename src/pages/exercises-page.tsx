@@ -10,20 +10,32 @@ import { ExerciseProgressHeader } from '@/components/exercises/exercise-progress
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useAuth } from '@/contexts/auth-context'
 import { getCurrentWeekDays, getExerciseWeekdayFromDateKey, getTodayKey } from '@/lib/date'
 import {
   buildExerciseProgressSummary,
   calculateDayCompletion,
 } from '@/lib/exercise-score'
-import { getDefaultExerciseTemplate } from '@/lib/exercise-template'
+import {
+  getDefaultExerciseTemplate,
+  getExerciseTemplateById,
+  getExerciseTemplates,
+} from '@/lib/exercise-template'
 import {
   getExerciseEntryId,
   setExerciseCompletion,
   subscribeToExerciseEntriesByDate,
   subscribeToExerciseHistoryEntries,
 } from '@/services/exercise-entry-service'
-import { importDefaultExerciseTemplate } from '@/services/exercise-import-service'
+import { importExerciseTemplate } from '@/services/exercise-import-service'
+import { upsertExerciseLeaderboardPublic } from '@/services/exercise-leaderboard-service'
 import {
   subscribeToExerciseProfile,
   upsertExerciseProfile,
@@ -109,6 +121,7 @@ function profileMatchesSummary(
 
   if (
     profile.xpTotal !== summary.xpTotal ||
+    profile.weeklyXp !== summary.weeklyXp ||
     profile.currentStreak !== summary.currentStreak ||
     profile.bestStreak !== summary.bestStreak ||
     profile.weeklyAdherence !== summary.weeklyAdherence
@@ -120,7 +133,7 @@ function profileMatchesSummary(
 }
 
 export function ExercisesPage() {
-  const { user } = useAuth()
+  const { user, profile: userProfile } = useAuth()
   const [workouts, setWorkouts] = useState<ExerciseWorkoutDocument[]>([])
   const [entriesForSelectedDate, setEntriesForSelectedDate] = useState<ExerciseEntryDocument[]>([])
   const [historyEntries, setHistoryEntries] = useState<ExerciseEntryDocument[]>([])
@@ -138,9 +151,19 @@ export function ExercisesPage() {
   const [savingEditor, setSavingEditor] = useState(false)
   const [savingWorkoutIds, setSavingWorkoutIds] = useState<string[]>([])
   const [importingDefaults, setImportingDefaults] = useState(false)
+  const [selectedTemplateId, setSelectedTemplateId] = useState(
+    getDefaultExerciseTemplate().templateId,
+  )
   const [editMode, setEditMode] = useState(false)
   const [pulseProgress, setPulseProgress] = useState(false)
   const [profileSyncBlocked, setProfileSyncBlocked] = useState(false)
+
+  const templates = useMemo(() => getExerciseTemplates(), [])
+  const selectedTemplate =
+    useMemo(
+      () => getExerciseTemplateById(selectedTemplateId) ?? templates[0] ?? getDefaultExerciseTemplate(),
+      [selectedTemplateId, templates],
+    )
 
   const weekDays = useMemo(() => getCurrentWeekDays(), [])
   const selectedDay =
@@ -286,6 +309,7 @@ export function ExercisesPage() {
     try {
       await upsertExerciseProfile(user.uid, {
         xpTotal: nextSummary.xpTotal,
+        weeklyXp: nextSummary.weeklyXp,
         currentStreak: nextSummary.currentStreak,
         bestStreak: nextSummary.bestStreak,
         weeklyAdherence: nextSummary.weeklyAdherence,
@@ -294,6 +318,16 @@ export function ExercisesPage() {
           defaultTemplateVersionImported ??
           profile?.defaultTemplateVersionImported ??
           null,
+        rivalUid: profile?.rivalUid ?? null,
+      })
+
+      await upsertExerciseLeaderboardPublic({
+        uid: user.uid,
+        displayName: userProfile?.displayName || 'DAIL member',
+        weeklyXp: nextSummary.weeklyXp,
+        xpTotal: nextSummary.xpTotal,
+        weeklyAdherence: nextSummary.weeklyAdherence,
+        currentStreak: nextSummary.currentStreak,
       })
     } catch (error) {
       console.error('Could not sync exercise profile', error)
@@ -304,7 +338,13 @@ export function ExercisesPage() {
         )
       }
     }
-  }, [profile?.defaultTemplateVersionImported, profileSyncBlocked, user])
+  }, [
+    profile?.defaultTemplateVersionImported,
+    profile?.rivalUid,
+    profileSyncBlocked,
+    user,
+    userProfile?.displayName,
+  ])
 
   useEffect(() => {
     if (!user || !historyLoaded || !workoutsLoaded) {
@@ -322,28 +362,31 @@ export function ExercisesPage() {
     void syncProfileSafely(summary)
   }, [historyLoaded, profile, profileSyncBlocked, summary, syncProfileSafely, user, workoutsLoaded])
 
-  async function handleImportDefaults() {
+  async function handleImportTemplate() {
     if (!user) {
       return
     }
 
     setImportingDefaults(true)
     try {
-      const result = await importDefaultExerciseTemplate({
+      const result = await importExerciseTemplate({
         uid: user.uid,
+        templateId: selectedTemplate.templateId,
         existingWorkouts: workouts,
       })
 
-      if (result.importedCount === 0) {
-        toast.message('Default plan already imported. You are all set.')
+      if (result.importedCount === 0 && result.removedCount === 0) {
+        toast.message(`${selectedTemplate.title} is already imported.`)
       } else {
-        toast.success(`Imported ${result.importedCount} default exercise items.`)
+        toast.success(
+          `Imported ${result.importedCount} from ${selectedTemplate.title}. Removed ${result.removedCount} from other template(s).`,
+        )
       }
 
       await syncProfileSafely(summary, result.templateVersion)
     } catch (error) {
-      console.error('Could not import default exercise template', error)
-      toast.error('Could not import the default plan right now.')
+      console.error('Could not import exercise template', error)
+      toast.error('Could not import this template right now.')
     } finally {
       setImportingDefaults(false)
     }
@@ -493,27 +536,39 @@ export function ExercisesPage() {
   }
 
   if (workouts.length === 0) {
-    const template = getDefaultExerciseTemplate()
-
     return (
       <div className="space-y-5">
         <Card>
-          <CardContent className="space-y-3 p-5">
+          <CardContent className="space-y-4 p-5">
             <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
               Exercises
             </p>
-            <h2 className="text-3xl tracking-[-0.05em]">Import your default weekly plan</h2>
+            <h2 className="text-3xl tracking-[-0.05em]">Import a weekly plan</h2>
+            <div className="max-w-sm">
+              <Select value={selectedTemplate.templateId} onValueChange={setSelectedTemplateId}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {templates.map((template) => (
+                    <SelectItem key={template.templateId} value={template.templateId}>
+                      {template.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <p className="text-sm leading-6 text-muted-foreground">
-              Start with the default {template.title} routine, then customize every item for any user.
+              Start with {selectedTemplate.title}, then customize every item for any user.
             </p>
           </CardContent>
         </Card>
 
         <EmptyState
-          actionLabel={importingDefaults ? 'Importing...' : 'Import default plan'}
-          description="This imports Shiela's full weekly checklist with movement cues and video references."
+          actionLabel={importingDefaults ? 'Importing...' : `Import ${selectedTemplate.title}`}
+          description={selectedTemplate.description}
           onAction={() => {
-            void handleImportDefaults()
+            void handleImportTemplate()
           }}
           title="No exercises yet"
         />
@@ -529,6 +584,7 @@ export function ExercisesPage() {
         pulse={pulseProgress}
         todayCompletion={summary.todayCompletion}
         weeklyAdherence={summary.weeklyAdherence}
+        weeklyXp={summary.weeklyXp}
         xpTotal={summary.xpTotal}
       />
 
@@ -542,14 +598,28 @@ export function ExercisesPage() {
               <h3 className="mt-1 text-2xl tracking-[-0.04em]">Exercises</h3>
             </div>
             <div className="flex flex-wrap gap-2">
+              <div className="min-w-52">
+                <Select value={selectedTemplate.templateId} onValueChange={setSelectedTemplateId}>
+                  <SelectTrigger className="h-9 rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {templates.map((template) => (
+                      <SelectItem key={template.templateId} value={template.templateId}>
+                        {template.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <Button
                 disabled={importingDefaults}
                 size="sm"
                 variant="outline"
-                onClick={() => void handleImportDefaults()}
+                onClick={() => void handleImportTemplate()}
               >
                 <RefreshCw className="size-4" />
-                {importingDefaults ? 'Importing...' : 'Import defaults'}
+                {importingDefaults ? 'Importing...' : 'Import template'}
               </Button>
               <Button
                 size="sm"

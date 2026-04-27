@@ -1,4 +1,4 @@
-import { doc, getDoc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
+import { doc, getDoc, onSnapshot, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 
 import { db } from '@/lib/firebase'
 import type { ExerciseProfileDocument } from '@/types/models'
@@ -55,6 +55,7 @@ export async function upsertExerciseProfile(
   uid: string,
   values: Omit<ExerciseProfileDocument, 'id' | 'userId' | 'createdAt' | 'updatedAt'> & {
     defaultTemplateVersionImported?: string | null
+    rivalUid?: string | null
   },
 ) {
   let existing: ExerciseProfileDocument | null = null
@@ -80,6 +81,7 @@ export async function upsertExerciseProfile(
       id: uid,
       userId: uid,
       xpTotal: values.xpTotal,
+      weeklyXp: values.weeklyXp,
       currentStreak: values.currentStreak,
       bestStreak: values.bestStreak,
       weeklyAdherence: values.weeklyAdherence,
@@ -88,7 +90,48 @@ export async function upsertExerciseProfile(
         values.defaultTemplateVersionImported ??
         existing?.defaultTemplateVersionImported ??
         null,
+      rivalUid:
+        values.rivalUid ??
+        existing?.rivalUid ??
+        null,
       createdAt: existing?.createdAt ?? serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    } satisfies Omit<ExerciseProfileDocument, 'createdAt' | 'updatedAt'> & {
+      createdAt: unknown
+      updatedAt: unknown
+    },
+  )
+}
+
+export async function setExerciseProfileRival(
+  uid: string,
+  rivalUid: string | null,
+) {
+  const existing = await getExerciseProfile(uid)
+  const cleanRivalUid = rivalUid?.trim() ? rivalUid : null
+
+  if (existing) {
+    await updateDoc(getProfileRef(uid), {
+      rivalUid: cleanRivalUid,
+      updatedAt: serverTimestamp(),
+    })
+    return
+  }
+
+  await setDoc(
+    getProfileRef(uid),
+    {
+      id: uid,
+      userId: uid,
+      xpTotal: 0,
+      weeklyXp: 0,
+      currentStreak: 0,
+      bestStreak: 0,
+      weeklyAdherence: 0,
+      badges: [],
+      defaultTemplateVersionImported: null,
+      rivalUid: cleanRivalUid,
+      createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     } satisfies Omit<ExerciseProfileDocument, 'createdAt' | 'updatedAt'> & {
       createdAt: unknown

@@ -73,6 +73,24 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "exerciseLeaderboardPublic",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "weeklyXp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "weeklyAdherence",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "currentStreak",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []
